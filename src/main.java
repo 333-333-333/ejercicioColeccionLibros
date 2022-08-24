@@ -7,19 +7,51 @@ import java.util.Scanner;
 public class main {
 
     public static void main(String[] args) {
+        /* El ejercicio plantea el requerimiento de almacenar 100 libros (Primera dimensión del arreglo).
+         Cada libro tiene 3 datos (Segúnda dimensión): Nombre [0], Autor [1] y Editorial [2] */
+         String[][] librero = new String[100][3];
+
+         menuGeneral(librero);
     }
 
-    public static void mostrarColeccion(String[][] librero) {
-        System.out.println("Mostrando la colección: ");
-        for (String[] espacio : librero) {
-            if (hayLibro(espacio)) {
-                imprimirLibro(espacio);
-            }
+    public static void menuGeneral(String[][] librero) {
+        boolean main = true;
+        System.out.println("""
+                ¿Qué deseas hacer?
+                [1] Agregar libro
+                [2] Buscar libro
+                [3] Mostrar espacios usados
+                [4] Mostrar espacios dispobibles
+                [5] Mostrar la colección.
+                [6] Salir""");
+        switch (validarOpcion(1,6)) {
+            case 1 -> agregarLibro(librero);
+            case 2 -> buscarPorAutor(librero);
+            case 3 -> mostrarTotalLibros(librero);
+            case 4 -> mostrarTotalEspacios(librero);
+            case 5 -> mostrarColeccion(librero);
+            case 6 -> main = false;
+            default -> System.out.println("No se reconoce la opción, inténtalo nuevamente.");
+        }
+        if (main) {
+            menuGeneral(librero);
         }
     }
 
-
-
+    public static void buscarPorAutor(String[][] librero) {
+        System.out.println("¿Cuál es el autor que deseas buscar?");
+        String autor = validarTexto();
+        int coincidencias = 0;
+        for (String[] espacio : librero) {
+            if (hayLibro(espacio)) {
+                if (espacio[1].equals(autor)) {
+                    coincidencias++;
+                    imprimirLibro(espacio);
+                }
+            }
+        }
+        System.out.println("Total de coincidencias: " + coincidencias);
+    }
 
     public static String[][] agregarLibro(String[][] librero) {
         if (totalEspacios(librero)!=0) {
@@ -63,14 +95,17 @@ public class main {
         return totalLibros;
     }
 
-    public static boolean hayLibro(String[] espacio){
-        return (espacio[0] != null);
+    public static void mostrarColeccion(String[][] librero) {
+        System.out.println("Mostrando la colección: ");
+        for (String[] espacio : librero) {
+            if (hayLibro(espacio)) {
+                imprimirLibro(espacio);
+            }
+        }
     }
 
-    public static void imprimirLibrero(String[][] librero) {
-        for (String[] libro : librero) {
-            imprimirLibro(libro);
-        }
+    public static boolean hayLibro(String[] espacio){
+        return (espacio[0] != null);
     }
 
     public static void imprimirLibro(String[] libro) {
@@ -90,10 +125,6 @@ public class main {
         libro[2] = validarTexto(); // Índice reservado para la editorial;
 
         return libro;
-    }
-
-    public static String[][] crearLibrero() {
-        return new String[100][3];
     }
 
     public static String validarTexto() {
@@ -118,5 +149,5 @@ public class main {
             return validarOpcion(cotaInferior, cotaSuperior);
         }
     }
-    
+
 }
