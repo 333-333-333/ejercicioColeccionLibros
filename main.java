@@ -75,8 +75,8 @@ public class main {
 
     public static void mostrarColeccion(String[][] librero) {
         if (totalLibros(librero) != 0) {
+            System.out.println("Mostrando la colección: ");
             for (String[] espacio : librero) {
-                System.out.println("Mostrando la colección: ");
                 if (hayLibro(espacio)) {
                     imprimirLibro(espacio);
                 }
