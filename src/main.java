@@ -1,12 +1,15 @@
 /**
  * @author 333-333-333
  */
+
+import java.util.Objects;
 import java.util.Scanner;
 
 
 public class main {
 
     public static void main(String[] args) {
+
         /* El ejercicio plantea el requerimiento de almacenar 100 libros (Primera dimensión del arreglo).
          Cada libro tiene 3 datos (Segúnda dimensión): Nombre [0], Autor [1] y Editorial [2] */
          String[][] librero = new String[100][3];
@@ -16,14 +19,12 @@ public class main {
 
     public static void menuGeneral(String[][] librero) {
         boolean main = true;
+
         System.out.println("""
                 ¿Qué deseas hacer?
-                [1] Agregar libro
-                [2] Buscar libro
-                [3] Mostrar espacios usados
-                [4] Mostrar espacios dispobibles
-                [5] Mostrar la colección.
-                [6] Salir""");
+                [1] Agregar libro \n[2] Buscar libro
+                [3] Mostrar espacios usados \n[4] Mostrar espacios dispobibles
+                [5] Mostrar la colección. \n[6] Salir""");
         switch (validarOpcion(1,6)) {
             case 1 -> agregarLibro(librero);
             case 2 -> buscarPorAutor(librero);
@@ -33,24 +34,29 @@ public class main {
             case 6 -> main = false;
             default -> System.out.println("No se reconoce la opción, inténtalo nuevamente.");
         }
+
         if (main) {
             menuGeneral(librero);
         }
     }
 
     public static void buscarPorAutor(String[][] librero) {
-        System.out.println("¿Cuál es el autor que deseas buscar?");
-        String autor = validarTexto();
-        int coincidencias = 0;
-        for (String[] espacio : librero) {
-            if (hayLibro(espacio)) {
-                if (espacio[1].equals(autor)) {
-                    coincidencias++;
-                    imprimirLibro(espacio);
+        if (totalLibros(librero) != 0) {
+            int coincidencias = 0;
+            System.out.println("¿Cuál es el autor que deseas buscar?");
+            String autor = validarTexto();
+
+            for (String[] espacio : librero) {
+                if (hayLibro(espacio) && Objects.equals(espacio[1], autor)) {
+                        coincidencias++;
+                        imprimirLibro(espacio);
                 }
             }
+
+            System.out.println("Total de coincidencias: " + coincidencias);
+        } else {
+            System.out.println("No hay libros para buscar.");
         }
-        System.out.println("Total de coincidencias: " + coincidencias);
     }
 
     public static String[][] agregarLibro(String[][] librero) {
@@ -67,12 +73,26 @@ public class main {
         return librero;
     }
 
+    public static void mostrarColeccion(String[][] librero) {
+        if (totalLibros(librero) != 0) {
+            for (String[] espacio : librero) {
+                System.out.println("Mostrando la colección: ");
+                if (hayLibro(espacio)) {
+                    imprimirLibro(espacio);
+                }
+            }
+        } else {
+            System.out.println("No hay colección.");
+        }
+    }
+
     public static void mostrarTotalEspacios(String[][] librero) {
         System.out.println("Hay un total de " + totalEspacios(librero) + " espacios disponibles en el librero.");
     }
 
     public static int totalEspacios(String[][] librero) {
         int totalEspacios = 0;
+
         for (String[] espacio : librero) {
             if (!hayLibro(espacio)) {
                 totalEspacios++;
@@ -87,21 +107,13 @@ public class main {
 
     public static int totalLibros(String[][] librero) {
         int totalLibros = 0;
+
         for (String[] espacio : librero) {
             if (hayLibro(espacio)) {
                 totalLibros++;
             }
         }
         return totalLibros;
-    }
-
-    public static void mostrarColeccion(String[][] librero) {
-        System.out.println("Mostrando la colección: ");
-        for (String[] espacio : librero) {
-            if (hayLibro(espacio)) {
-                imprimirLibro(espacio);
-            }
-        }
     }
 
     public static boolean hayLibro(String[] espacio){
@@ -113,14 +125,12 @@ public class main {
     }
 
     public static String[] crearLibro() {
-        String[] libro = new String[3];
+        String[] libro = new String[3]; // 3 Variables: Nombre, autor y editorial.
 
         System.out.println("¿Cuál es el nombre del libro?");
         libro[0] = validarTexto(); // Índice reservado para el nombre.
-
         System.out.println("¿Cuál es el autor del libro?");
         libro[1] = validarTexto(); // Índice reservado para el autor.
-
         System.out.println("¿Cuál es la editorial del libro?");
         libro[2] = validarTexto(); // Índice reservado para la editorial;
 
@@ -130,22 +140,25 @@ public class main {
     public static String validarTexto() {
         Scanner input = new Scanner(System.in);
         String texto = input.nextLine();
-        return ((texto != "") ? texto : validarTexto());
+        return ((!Objects.equals(texto, "")) ? texto : validarTexto());
     }
 
     public static int validarOpcion(int cotaInferior, int cotaSuperior) {
         Scanner input = new Scanner(System.in);
+
         try {
             System.out.println("Seleccione una opción entre " + cotaInferior + " y " + cotaSuperior);
             int opcion = input.nextInt();
+
             if ((opcion >= cotaInferior) && (opcion <= cotaSuperior)){
                 return opcion;
             } else {
-                input.nextLine();
-                return validarOpcion(cotaInferior,cotaSuperior);
+                input.nextLine(); //Para evitar el error del Scanner, que no actualiza las variables insertadas.
+                return validarOpcion(cotaInferior, cotaSuperior);
             }
+
         } catch (Exception e) {
-            input.nextLine();
+            input.nextLine(); //Para evitar el error del Scanner, que no actualiza las variables insertadas.
             return validarOpcion(cotaInferior, cotaSuperior);
         }
     }
